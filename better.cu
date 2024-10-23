@@ -1,7 +1,7 @@
 #include <iostream>
 #include <math.h>
 
-#define SIZE 256
+#define SIZE 10000
 
 //kernel function to perform prefix sum with multiple threads
 __global__
