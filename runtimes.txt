@@ -1,0 +1,11 @@
+single thread cpu
+
+1:
+10:
+100:
+1000:
+
+naive
+
+
+better
