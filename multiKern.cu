@@ -2,7 +2,7 @@
 #include <math.h>
 #include <sys/time.h>
 
-#define SIZE 8
+#define SIZE 1024
 
 //kernel function to perform prefix sum with multiple threads
 __global__
@@ -90,10 +90,10 @@ int main(void){
 , end);
         printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 
-        for (int i=0;i<SIZE;i++){
+        /*for (int i=0;i<SIZE;i++){
                 printf("%d ", output[i]);
         }
-        printf("\n");
+        printf("\n");*/
         //check for errors
 //      float maxError = 0;
 //      for (int i=0;i<SIZE;i++){
