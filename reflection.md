@@ -1,19 +1,2 @@
 ## Reflection
-
-In addition to the code, data, and graphs you should complete a short
-written reflection on this process.
-Answer the following questions:
-
-## Deliverables
-
-* Four implementations (single or seprate codes)
-* Graph of results (can upload raw data, generations script)
-* Runtime analysis (txt, pdf, etc)
-* Reflection
-
-* Peer feedback PR
-
-## Extras
-
-Implement the other advanced algorithm, either recursive doubling or
-multiple kernels.
+For this project, I appreciated going over the single thread and naive approaches in class. I also appreciated the ample time to work on the third step in class. I found the concepts to be understandable, but had a more difficult time with the implementation in C. I found the slides of the advanced algorithms to be a bit confusing and would have appreciated some more time going over it in class, even though the work time was nice. 
