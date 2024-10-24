@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <sys/time.h>
 
-#define SIZE 1024
+#define SIZE 128
 
 double get_clock() {
 	struct timeval tv; int ok;
@@ -22,6 +22,8 @@ int main() {
         int* output = malloc(sizeof(int) * SIZE);
         double *times = malloc(sizeof(double) * SIZE);
 
+
+		//calibrate the clock
         double t0 = get_clock();
         for (int i=0; i<SIZE; i++){
         	times[i] = get_clock();
@@ -35,23 +37,27 @@ int main() {
                 input[i]=1;
         }
 
+		//start the timer
 		double start = get_clock();
         //do the scan
         for (int i=0; i<SIZE;i++) {
                 int value = 0;
                 for (int j=0; j<=i; j++){
+                		//for each value, add the previous
                         value += input[j];
                 }
                 output[i] = value;
         }
+        //get the end time
         double end = get_clock();
 
         //check results
-        /*for (int i=0; i<SIZE; i++) {
+        for (int i=0; i<SIZE; i++) {
                 printf("%d ", output[i]);
         }
-        printf("\n");*/
+        printf("\n");
 
+        //print clock times
         printf("start: %f, end: %f\n", start, end);
 
         
