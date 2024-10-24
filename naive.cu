@@ -34,11 +34,13 @@ double get_clock() {
 
 int main(void){
 
-        //define and allocate input and output arrays
-        int *input, *output;
+    //define and allocate input and output arrays
+    int *input, *output;
 	int *times;
   	cudaMallocManaged(&times, SIZE*sizeof(double));
 
+
+	//calibrate clock
 	double t0 = get_clock();
   	for (int i=0; i<SIZE; i++){
             times[i] = get_clock();
@@ -46,35 +48,45 @@ int main(void){
   	double t1 = get_clock();
   	printf("time per call: %f nx\n", (1000000000.0 * (t1-t0)/SIZE));		
 
-        cudaMallocManaged(&input, sizeof(int) * SIZE);
-        cudaMallocManaged(&output, sizeof(int) * SIZE);
+    cudaMallocManaged(&input, sizeof(int) * SIZE);
+    cudaMallocManaged(&output, sizeof(int) * SIZE);
 
-        //initialize input array
-        for (int i=0; i<SIZE; i++) {
-                input[i] = 1;
-        }
+    //initialize input array
+    for (int i=0; i<SIZE; i++) {
+    	input[i] = 1;
+    }
 
-
+	//start timer
 	double start = get_clock();
         //run kernel on elements on the GPU
         prefixsum<<<1,SIZE>>>(input, output);
+    //get middle time
 	double middle = get_clock();
 
 
-        cudaDeviceSynchronize();
+    cudaDeviceSynchronize();
+
+    //get end time
 	double end = get_clock();
-        printf("%s\n", cudaGetErrorString(cudaGetLastError()));
+	//print any errors
+    printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 
-	 printf("start: %f, middle: %f, end: %f", start, middle, end);
+    for (int i=0;i<SIZE;i++){
+         printf("%d ", output[i]);
+    }
+    printf("\n");
 
-       /* for (int i=0;i<SIZE;i++){
-                printf("%d ", output[i]);
-        }
-        printf("\n");*/
+    //print clock times
+    printf("start: %f, middle: %f, end: %f\n", start, middle, end);
         //check for errors
 //      float maxError = 0;
 //      for (int i=0;i<SIZE;i++){
 //              maxError = fmax(maxError, fabs(output[i]-7));
 //      }
 //      std::cout << "Max error: " <<< maxError <<< std::endl;
+	//free mem
+	cudaFree(input);
+	cudaFree(output);
+	cudaFree(times);
+
 }
