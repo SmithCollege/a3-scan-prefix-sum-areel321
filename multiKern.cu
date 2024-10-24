@@ -2,17 +2,18 @@
 #include <math.h>
 #include <sys/time.h>
 
-#define SIZE 1024
+#define SIZE 128
 
 //kernel function to perform prefix sum with multiple threads
 __global__
 void prefixsum(int *input, int *output, int stride){
         //get index of current thread
         int xindex = threadIdx.x;
-        //int index = blockIdx.x * blockDim.x + threadIdx.x;
+        //if we are outside the stride, perform the offser
 		if ( xindex >= stride ) {
 			output[xindex] = input[xindex] + input[xindex-stride];
 		}
+		//if we are in the stride, copy the value over
 		if ( xindex < stride ) {
 			output[xindex] = input[xindex];
 		}
@@ -40,8 +41,7 @@ int main(void){
         cudaMallocManaged(&input, sizeof(int) * SIZE);
         cudaMallocManaged(&output, sizeof(int) * SIZE);
 
-
-	
+		//calibrate clock
         double t0 = get_clock();
         for (int i=0; i<SIZE; i++){
             times[i] = get_clock();
@@ -54,54 +54,50 @@ int main(void){
                 input[i] = 1;
         }
 
-
+		//get pointers for swapping
 		source = &input[0];
 		destination = &output[0];
-        
-        
-
-        //run kernel on elements on the GPU
-        
-        	//call kernel to sync threads
-        	//int stride = 1;
+		
+        //start clock
 		double start = get_clock();
-			for (int stride=1; stride < SIZE; stride*=2){
-				//stride *=2;
-				
+		//start loop to go over arr, stride x2 each time
+		for (int stride=1; stride < SIZE; stride*=2){
+				//run kernel on elements on the GPU
 				prefixsum<<<1,SIZE>>>(source, destination, stride);
-			
 
 	        	//switch pointers
 	        	temp = destination;
 	        	destination = source;
 	        	source = temp;
+        }
 
-
-	        	
-        	}
-        	
-        	double middle = get_clock();
-       
-
+       	//get middle time
+        double middle = get_clock();
         cudaDeviceSynchronize();
-	double end = get_clock();
+        //get end time
+		double end = get_clock();
 
-         printf("start: %f, middle: %f, end: %f", start, middle\
-, end);
+		//print errors
         printf("%s\n", cudaGetErrorString(cudaGetLastError()));
 
-        /*for (int i=0;i<SIZE;i++){
+		//check for correctness
+        for (int i=0;i<SIZE;i++){
                 printf("%d ", output[i]);
         }
-        printf("\n");*/
+        printf("\n");
+        
+		//print clock times
+        printf("start: %f, middle: %f, end: %f", start, middle, end);
         //check for errors
 //      float maxError = 0;
 //      for (int i=0;i<SIZE;i++){
 //              maxError = fmax(maxError, fabs(output[i]-7));
 //      }
 //      std::cout << "Max error: " <<< maxError <<< std::endl;
+		//free mem
 		cudaFree(input);
 		cudaFree(output);
 		cudaFree(times);
+		
 
 }
